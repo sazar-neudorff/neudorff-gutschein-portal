@@ -1,0 +1,58 @@
+/* === Gemeinsamer Button-Stil === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: FrankieNeudorff, Arial, sans-serif;
+  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === Zurück-Button (braun) === */
+.btn-brown {
+  background-color: #474030;
+  color: white;
+}
+.btn-brown:hover {
+  background-color: #474030;
+}
+
+/* === Weiter-Button (grün) === */
+.btn-green {
+  background-color: #319f49;
+  color: white;
+}
+.btn-green:hover {
+  background-color: #2c8e2a;
+}
+
+/* === Pfeil nach links für Zurück-Button === */
+.btn-left::before {
+  content: "←";
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.btn:hover.btn-left::before {
+  transform: translateX(-5px);
+}
+
+/* === Pfeil nach rechts für Weiter-Button === */
+.btn-right::after {
+  content: "→";
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.btn:hover.btn-right::after {
+  transform: translateX(5px);
+}

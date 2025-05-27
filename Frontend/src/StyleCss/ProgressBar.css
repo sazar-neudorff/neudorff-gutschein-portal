@@ -1,0 +1,121 @@
+/* === Container für Fortschrittsleiste === */
+.progress-container {
+  padding: 1.5rem 1rem 0.5rem 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* === Fortschritts-Schritte (Textlabels) === */
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 500;
+  color: #666;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+/* === Label-Stile === */
+.label {
+  transition: all 0.2s ease;
+}
+
+.label.done {
+  color: #3AAA35;
+}
+
+.label.active {
+  font-weight: bold;
+  color: #3AAA35;
+}
+
+/* === Fortschrittsbalken-Hintergrund === */
+.progress-bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background-color: #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* === Fortschrittsbalken-Container === */
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* === Gefüllter Fortschrittsanteil === */
+.progress-fill {
+  height: 100%;
+  background-color: #3AAA35;
+  transition: width 0.3s ease;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* === Smartphones: max 540px === */
+@media (max-width: 540px) {
+  .progress-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .progress-labels {
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+    gap: 0.3rem;
+  }
+
+  .progress-bar-wrapper {
+    height: 4px;
+    margin-top: 0.75rem;
+  }
+}
+
+/* === Kleinere Tablets: 541px – 767px === */
+@media (min-width: 541px) and (max-width: 767px) {
+  .progress-container {
+    padding: 1.2rem 1rem;
+  }
+
+  .progress-labels {
+    font-size: 0.85rem;
+    gap: 0.6rem;
+  }
+}
+
+/* === Tablets & kleine Laptops: 768px – 1024px === */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .progress-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .progress-labels {
+    font-size: 0.9rem;
+    gap: 1rem;
+  }
+}
+
+/* === Standard-Laptops: 1025px – 1440px === */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .progress-labels {
+    gap: 1.5rem;
+  }
+}
+
+/* === Große Desktops: ab 1441px === */
+@media (min-width: 1441px) {
+  .progress-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .progress-labels {
+    font-size: 1rem;
+  }
+}

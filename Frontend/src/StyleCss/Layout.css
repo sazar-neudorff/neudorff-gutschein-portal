@@ -1,0 +1,143 @@
+/* =============== Layout-Grundstruktur =============== */
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background: white;
+    font-family: 'GillSans', Arial, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* =============== Erde (optional Deko) =============== */
+  
+  .erdeWrapper {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 0;
+    pointer-events: none;
+    height: 250px;
+  }
+  
+  .erdeObenRechts {
+    position: fixed;
+    top: 0;
+    right: 11px;
+    width: 800px;
+    opacity: 1;
+    z-index: 0;
+    transform: scaleX(-1);
+    filter: contrast(120%) brightness(105%);
+    pointer-events: none;
+  }
+  
+  .erdeUntenLinks {
+    position: fixed;
+    top: 60%;
+    left: 0;
+    width: 800px;
+    opacity: 1;
+    z-index: 0;
+    filter: contrast(120%) brightness(105%);
+    pointer-events: none;
+  }
+  
+  /* =============== Navbar oben =============== */
+  
+  .navbar {
+    background: linear-gradient(to bottom, #ffee50 0%, white 100%);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    height: 200px;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+  
+  .navLeft {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 200px;
+    margin-left: 4rem;
+    margin-right: 4rem;
+    margin-bottom: 4rem;
+  }
+  
+  .title {
+    font-family: Caveat,Arial,sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000000;
+  }
+  
+  /* =============== Inhalt =============== */
+  
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+  }
+  
+@media (max-width: 500px) {
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .navbar {
+  background: linear-gradient(to bottom, #ffee50 0%, white 100%);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  z-index: 2;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.logo {
+    width: 200px;
+    margin-left: 4rem;
+    margin-right: 4rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .logo {
+    margin: 0 auto 1rem auto;
+    width: 150px;
+  }
+
+  .title {
+    font-size: 1.3rem;
+    padding: 0 1rem;
+    word-break: break-word;
+    line-height: 1.4;
+    max-width: 90%;
+  }
+}
+
+  

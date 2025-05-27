@@ -1,0 +1,102 @@
+.summary-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .summary-page h2 {
+    text-align: center;
+    color: #319f49;
+    font-family: FrankieNeudorff, Arial, sans-serif;
+    margin-bottom: 2rem;
+  }
+  
+  .summary-block {
+    background-color: #f8f8f8;
+    padding: 1.2rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .summary-block h3 {
+    margin-bottom: 0.8rem;
+    font-family: Caveat, Arial, sans-serif;
+    font-size: 1.3rem;
+  }
+  
+  .summary-block p {
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  .produkt-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .produkt-bild img {
+    width: 150px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .produkt-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #319f49;
+    font-family: FrankieNeudorff, Arial, sans-serif;
+  }
+  
+  .produkt-info p {
+    font-size: 1rem;
+    font-family: Caveat, Arial, sans-serif;
+    color: black;
+  }
+  
+  /* Kompakterer Lieferzeitraum-Block */
+  .summary-block.lieferung {
+    max-width: 300px;
+  }
+  
+  .summary-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  
+  .hinweis-links {
+    margin-top: 1rem;
+  }
+  
+  .link-inline {
+    color: #2c7cbd;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  
+  /* Mobile Optimierung */
+  @media (max-width: 600px) {
+    .produkt-wrapper {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .summary-nav {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  

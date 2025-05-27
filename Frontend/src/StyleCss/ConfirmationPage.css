@@ -1,0 +1,48 @@
+/* src/StyleCss/ConfirmationPage.css */
+
+.confirmation-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .confirmation-page h2 {
+    font-size: 2rem;
+    color: #319f49;
+    font-family: FrankieNeudorff, Arial, sans-serif;
+    margin-bottom: 1rem;
+  }
+  
+  .confirmation-page p {
+    font-size: 1.2rem;
+    font-family: Caveat, Arial, sans-serif;
+    margin-bottom: 1rem;
+    color: black;
+  }
+  
+  .info-box {
+    background-color: #f2fdf4;
+    border: 2px solid #319f49;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .home-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-family: FrankieNeudorff, Arial, sans-serif;
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #319f49;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+  }
+  
+  .home-link:hover {
+    background-color: #2c8e2a;
+  }
+  
