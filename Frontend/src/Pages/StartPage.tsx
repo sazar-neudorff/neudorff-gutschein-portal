@@ -1,3 +1,4 @@
+// src/Pages/StartPage.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../StyleCss/StartPage.css';
@@ -16,7 +17,7 @@ export default function StartPage() {
       setCode(gespeicherterCode);
     }
 
-    // Speicher bei Neuladen/leaving zurücksetzen
+    // localStorage leeren beim Verlassen
     const resetStorage = () => {
       localStorage.clear();
     };
@@ -38,20 +39,48 @@ export default function StartPage() {
     setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const rawCode = code.replace(/-/g, '');
-    if (rawCode.length !== 16) {
-      setError('Der Gutscheincode muss genau 16 Zeichen lang sein.');
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const rawCode = code.replace(/-/g, '');
+
+  if (rawCode.length !== 16) {
+    setError('Der Gutscheincode muss genau 16 Zeichen lang sein.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/code-check?gutscheincode=${code}`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || 'Fehler bei der Prüfung des Codes.');
       return;
     }
 
-    localStorage.setItem('gutscheincode', code);
+    localStorage.setItem('gutscheincode', data.gutscheincode);
+    localStorage.setItem('code_typ', data.typ);
+    if (data.produkt_id) {
+      const produkt = {
+        id: data.produkt_id,
+        name: data.produktname,
+        beschreibung: data.beschreibung,
+        bild: data.bildpfad,
+        einsatzorte: JSON.parse(data.einsatzorte || '[]')
+      };
+    localStorage.setItem('produkt', JSON.stringify(produkt));
+}
+
     navigate('/auswahl');
-  };
+  } catch (err) {
+    console.error(err);
+    setError('Verbindungsfehler. Bitte später erneut versuchen.');
+  }
+};
+
 
   const handleRemoveCode = () => {
     localStorage.removeItem('gutscheincode');
+    localStorage.removeItem('code_typ');
     setCode('');
     setError('');
   };
