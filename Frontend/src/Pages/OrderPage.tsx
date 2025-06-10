@@ -1,4 +1,3 @@
-// src/Pages/OrderPage.tsx
 import { useEffect, useState } from 'react';
 import Layout from './Layout';
 import ProgressBar from '../Elements/ProgressBar';
@@ -6,7 +5,6 @@ import '../StyleCss/OrderPage.css';
 import '../StyleCss/Buttons.css';
 import { useNavigate } from 'react-router-dom';
 
-// Produkt-Typ
 interface Produkt {
   id: string;
   name: string;
@@ -15,89 +13,74 @@ interface Produkt {
   einsatzorte: string[];
 }
 
-// Kalenderwochen-Typ
 interface Kalenderwoche {
   kw: string;
   zeitraum: string;
 }
-
-// Beispiel-Produkte
-const PRODUKTE: Produkt[] = [
-  {
-    id: 'hm1',
-    name: 'HM-Nematoden gegen Dickmaulrüssler',
-    beschreibung: 'Menge: 10 Mio. Dauerlarven für 20 m²',
-    bild: '/assets/placeholder.jpg',
-    einsatzorte: ['Innenräume', 'Freiland']
-  },
-  {
-    id: 'sf1',
-    name: 'SF-Nematoden gegen Trauermücken',
-    beschreibung: 'Menge: 10 Mio. Für Zimmerpflanzen',
-    bild: '/assets/placeholder.jpg',
-    einsatzorte: ['Innenräume']
-  },
-  {
-    id: 'sc1',
-    name: 'SC-Nematoden gegen Wiesenschnake',
-    beschreibung: 'Menge: 10 Mio. Für Gartenböden',
-    bild: '/assets/placeholder.jpg',
-    einsatzorte: ['Freiland']
-  }
-];
+  
 
 export default function OrderPage() {
   const navigate = useNavigate();
+  const [produkte, setProdukte] = useState<Produkt[]>([]);
   const [produktId, setProduktId] = useState('');
   const [einsatzort, setEinsatzort] = useState('');
   const [lieferkw, setLieferkw] = useState('');
-  const [error, setError] = useState('');
-
   const [kalenderwochen, setKalenderwochen] = useState<Kalenderwoche[]>([]);
+  const [error, setError] = useState('');
+  const [codeTyp, setCodeTyp] = useState<'alt' | 'neu'>('neu');
 
-  const produkt = PRODUKTE.find(p => p.id === produktId);
+  const produkt = produkte.find(p => p.id === produktId);
 
-  // 🟢 Daten beim Start aus localStorage laden
   useEffect(() => {
+    const code = localStorage.getItem('gutscheincode');
+    const typ = localStorage.getItem('code_typ') as 'alt' | 'neu';
+    if (typ) setCodeTyp(typ);
+
+    fetch(`http://localhost:5000/api/code-check?gutscheincode=${code}`)
+      .then(res => res.json())
+      .then(data => {
+        if (typ === 'neu') {
+          const p: Produkt = {
+            id: data.produkt_id,
+            name: data.produktname,
+            beschreibung: data.beschreibung,
+            bild: `/assets/${data.bildpfad}`,
+            einsatzorte: data.einsatzorte
+          };
+          setProdukte([p]);
+          setProduktId(p.id);
+        }
+
+        if (typ === 'alt' && data.produkte) {
+          const list = data.produkte.map((p: any) => ({
+            id: p.produkt_id,
+            name: p.produktname,
+            beschreibung: p.beschreibung,
+            bild: `/assets/${p.bildpfad}`,
+            einsatzorte: p.einsatzorte
+          }));
+          setProdukte(list);
+        }
+      });
+
     setKalenderwochen(generateKWsFromToday());
-
-    const savedProdukt = localStorage.getItem('produkt');
-    const savedLieferkw = localStorage.getItem('lieferkw');
-
-    if (savedProdukt) {
-      try {
-        const parsed = JSON.parse(savedProdukt);
-        setProduktId(parsed.id || '');
-        setEinsatzort(parsed.einsatzorte?.[0] || ''); // optional Vorbelegung
-      } catch {}
-    }
-
-    if (savedLieferkw) {
-      setLieferkw(savedLieferkw);
-    }
   }, []);
 
-  // 🟢 Änderungen live speichern
   useEffect(() => {
-    const p = PRODUKTE.find(p => p.id === produktId);
-    if (p) {
-      localStorage.setItem('produkt', JSON.stringify(p));
+    // Wenn Produkt neu gewählt wird (bei alt), Einsatzort zurücksetzen
+    if (codeTyp === 'alt') {
+      setEinsatzort('');
     }
-  }, [produktId]);
-
-  useEffect(() => {
-    if (lieferkw) {
-      localStorage.setItem('lieferkw', lieferkw);
-    }
-  }, [lieferkw]);
+  }, [produktId, codeTyp]);
 
   const handleWeiter = () => {
     if (!produkt || !einsatzort || !lieferkw) {
-      setError('Bitte wähle alle Felder aus.');
+      setError('Bitte wählen Sie Produkt, Einsatzort und Lieferzeit.');
       return;
     }
 
     localStorage.setItem('produkt', JSON.stringify(produkt));
+    localStorage.setItem('einsatzort', einsatzort); // nur String!
     localStorage.setItem('lieferkw', lieferkw);
     navigate('/adresse');
   };
@@ -106,36 +89,36 @@ export default function OrderPage() {
     <Layout>
       <ProgressBar currentStep={2} />
       <div className="orderpage-container">
-        {/* Hinweis (links) */}
+        {/* Hinweisbox */}
         <div className="hinweis-box">
           <h4>🔍 HINWEIS:</h4>
-          <p><strong>Bitte wählen Sie pro Bestell-Set eine Nützlingsart aus.</strong> Wir fragen den Anwendungsort ab, um den passenden Versandzeitraum zu bestimmen.</p>
+          
+          <p><strong>Pro Gutschein kann ein Nützling bestellt werden.</strong></p>
           <p>Die Nützlinge werden per DHL versendet. Die Lieferzeit beträgt 2–5 Werktage.</p>
           <p><strong>Kein Versand:</strong><br />
             – an Freitagen und Feiertagen<br />
             – bei Temperaturen unter 5 °C oder über 35 °C
           </p>
-          <div className="hinweis-links">
-            <a href="/" className="link-inline">Bestell-Set-Code ändern</a><br />
-          </div>
         </div>
 
-        {/* Auswahlbereich (rechts) */}
+        {/* Auswahlformular */}
         <div className="form-box">
           <h3>Nützlingsauswahl & Lieferzeit</h3>
 
-          {/* Produktauswahl */}
-          <div className="form-group">
-            <label>Welchen Nützling wollen Sie einsetzen?</label>
-            <select value={produktId} onChange={e => setProduktId(e.target.value)}>
-              <option value="">— Bitte wählen —</option>
-              {PRODUKTE.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
-          </div>
+          {/* Produktauswahl (nur alt) */}
+          {codeTyp === 'alt' && (
+            <div className="form-group">
+              <label>Welchen Nützling wollen Sie einsetzen?</label>
+              <select value={produktId} onChange={e => setProduktId(e.target.value)}>
+                <option value="">— Bitte wählen —</option>
+                {produkte.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-          {/* Vorschau */}
+          {/* Produktanzeige */}
           {produkt && (
             <div className="produkt-info-wrapper">
               <div className="produkt-image">
@@ -148,29 +131,34 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Einsatzort */}
-          {produkt && (
+          {/* Einsatzort-Auswahl für beide Typen */}
+          {produkt?.einsatzorte?.length > 0 && (
             <div className="form-group">
               <label>Wo wollen Sie die Nützlinge einsetzen?</label>
-              <select value={einsatzort} onChange={e => setEinsatzort(e.target.value)}>
+              <select
+                value={einsatzort}
+                onChange={(e) => setEinsatzort(e.target.value)}
+              >
                 <option value="">— Bitte wählen —</option>
-                {produkt.einsatzorte.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
+                {produkt.einsatzorte.map((ort, index) => (
+                  <option key={index} value={ort}>
+                    {ort}
+                  </option>
                 ))}
               </select>
             </div>
           )}
 
-          {/* Lieferzeit */}
+          {/* Lieferzeit-Auswahl */}
           {einsatzort && (
             <div className="form-group">
-              <label>Wann sollen wir die Nützlinge versenden? (KW = Kalenderwoche)</label>
+              <label>Lieferzeitraum (KW)</label>
               <select value={lieferkw} onChange={e => setLieferkw(e.target.value)}>
                 <option value="">— Bitte wählen —</option>
-                {kalenderwochen.map((k, index) => (
-                    <option key={`${k.kw}-${index}`} value={k.kw}>
-                      {k.kw} – Lieferung erfolgt zwischen dem {k.zeitraum}
-                    </option>
+                {kalenderwochen.map((k, i) => (
+                  <option key={i} value={k.kw}>
+                    {k.kw} – Lieferung: {k.zeitraum}
+                  </option>
                 ))}
               </select>
             </div>
@@ -179,7 +167,7 @@ export default function OrderPage() {
           {error && <p className="error">{error}</p>}
 
           <div className="order-nav">
-            <button className="btn btn-brown btn-left"   onClick={() => navigate('/')}>Zurück</button>
+            <button className="btn btn-brown btn-left" onClick={() => navigate('/')}>Zurück</button>
             <button className="btn btn-green btn-right" onClick={handleWeiter}>Weiter</button>
           </div>
         </div>
@@ -188,7 +176,6 @@ export default function OrderPage() {
   );
 }
 
-// Hilfsfunktionen für KW
 function generateKWsFromToday(): Kalenderwoche[] {
   const list: Kalenderwoche[] = [];
   const today = new Date();
@@ -198,7 +185,7 @@ function generateKWsFromToday(): Kalenderwoche[] {
   const current = new Date(today);
   const day = current.getDay();
   const diff = (day + 6) % 7;
-  current.setDate(current.getDate() - diff); // auf Montag setzen
+  current.setDate(current.getDate() - diff);
 
   while (current < end) {
     const monday = new Date(current);
