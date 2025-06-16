@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     return (
       <div className="dashboard">
         <header className="navbar">
-          <img src={logoImg} alt="Neudorff" className="logo" />
+          <a href="../"><img src={logoImg} alt="Neudorff" className="logo" /></a>
           {istStartseite && (
             <span className="title">Neudorff Nützlinge | Bestell-Sets online einlösen</span>
           )}

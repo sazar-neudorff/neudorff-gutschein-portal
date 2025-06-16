@@ -17,19 +17,23 @@ interface Kalenderwoche {
   kw: string;
   zeitraum: string;
 }
-  
 
 export default function OrderPage() {
   const navigate = useNavigate();
   const [produkte, setProdukte] = useState<Produkt[]>([]);
   const [produktId, setProduktId] = useState('');
-  const [einsatzort, setEinsatzort] = useState('');
   const [lieferkw, setLieferkw] = useState('');
   const [kalenderwochen, setKalenderwochen] = useState<Kalenderwoche[]>([]);
   const [error, setError] = useState('');
   const [codeTyp, setCodeTyp] = useState<'alt' | 'neu'>('neu');
 
   const produkt = produkte.find(p => p.id === produktId);
+  useEffect(() => {
+    const code = localStorage.getItem('gutscheincode');
+    if (!code) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const code = localStorage.getItem('gutscheincode');
@@ -41,46 +45,53 @@ export default function OrderPage() {
       .then(data => {
         if (typ === 'neu') {
           const p: Produkt = {
-            id: data.produkt_id,
+            id: data.ean,
             name: data.produktname,
             beschreibung: data.beschreibung,
             bild: `/assets/${data.bildpfad}`,
             einsatzorte: data.einsatzorte
           };
           setProdukte([p]);
-          setProduktId(p.id);
+          setProduktId(p.id); // direkt setzen
+          localStorage.setItem('produkt', JSON.stringify(p));
         }
 
         if (typ === 'alt' && data.produkte) {
-          const list = data.produkte.map((p: any) => ({
-            id: p.produkt_id,
-            name: p.produktname,
-            beschreibung: p.beschreibung,
-            bild: `/assets/${p.bildpfad}`,
-            einsatzorte: p.einsatzorte
-          }));
+          const list = data.produkte
+            .filter((p: any) => !!p.id)
+            .map((p: any) => ({
+              id: p.id,
+              name: p.produktname,
+              beschreibung: p.beschreibung,
+              bild: `/assets/${p.bildpfad}`,
+              einsatzorte: p.einsatzorte
+            }));
           setProdukte(list);
+
+          // Auswahl aus localStorage wiederherstellen
+          const gespeichertesProdukt = localStorage.getItem('produkt');
+          if (gespeichertesProdukt) {
+            const parsed = JSON.parse(gespeichertesProdukt);
+            setProduktId(parsed.id);
+          }
+        }
+
+        const gespeicherteLieferkw = localStorage.getItem('lieferkw');
+        if (gespeicherteLieferkw) {
+          setLieferkw(gespeicherteLieferkw);
         }
       });
 
     setKalenderwochen(generateKWsFromToday());
   }, []);
 
-  useEffect(() => {
-    // Wenn Produkt neu gewählt wird (bei alt), Einsatzort zurücksetzen
-    if (codeTyp === 'alt') {
-      setEinsatzort('');
-    }
-  }, [produktId, codeTyp]);
-
   const handleWeiter = () => {
-    if (!produkt || !einsatzort || !lieferkw) {
-      setError('Bitte wählen Sie Produkt, Einsatzort und Lieferzeit.');
+    if (!produkt || !lieferkw) {
+      setError('Bitte wählen Sie Produkt und Lieferzeit.');
       return;
     }
 
     localStorage.setItem('produkt', JSON.stringify(produkt));
-    localStorage.setItem('einsatzort', einsatzort); // nur String!
     localStorage.setItem('lieferkw', lieferkw);
     navigate('/adresse');
   };
@@ -89,10 +100,8 @@ export default function OrderPage() {
     <Layout>
       <ProgressBar currentStep={2} />
       <div className="orderpage-container">
-        {/* Hinweisbox */}
         <div className="hinweis-box">
           <h4>🔍 HINWEIS:</h4>
-          
           <p><strong>Pro Gutschein kann ein Nützling bestellt werden.</strong></p>
           <p>Die Nützlinge werden per DHL versendet. Die Lieferzeit beträgt 2–5 Werktage.</p>
           <p><strong>Kein Versand:</strong><br />
@@ -101,15 +110,20 @@ export default function OrderPage() {
           </p>
         </div>
 
-        {/* Auswahlformular */}
         <div className="form-box">
           <h3>Nützlingsauswahl & Lieferzeit</h3>
 
-          {/* Produktauswahl (nur alt) */}
+          {/* Produktauswahl nur bei ALT-Codes */}
           {codeTyp === 'alt' && (
             <div className="form-group">
               <label>Welchen Nützling wollen Sie einsetzen?</label>
-              <select value={produktId} onChange={e => setProduktId(e.target.value)}>
+              <select value={produktId} onChange={e => {
+                setProduktId(e.target.value);
+                const selected = produkte.find(p => p.id === e.target.value);
+                if (selected) {
+                  localStorage.setItem('produkt', JSON.stringify(selected));
+                }
+              }}>
                 <option value="">— Bitte wählen —</option>
                 {produkte.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
@@ -119,7 +133,7 @@ export default function OrderPage() {
           )}
 
           {/* Produktanzeige */}
-          {produkt && (
+          {produktId && produkt && (
             <div className="produkt-info-wrapper">
               <div className="produkt-image">
                 <img src={produkt.bild} alt={produkt.name} />
@@ -131,29 +145,14 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Einsatzort-Auswahl für beide Typen */}
-          {produkt?.einsatzorte?.length > 0 && (
-            <div className="form-group">
-              <label>Wo wollen Sie die Nützlinge einsetzen?</label>
-              <select
-                value={einsatzort}
-                onChange={(e) => setEinsatzort(e.target.value)}
-              >
-                <option value="">— Bitte wählen —</option>
-                {produkt.einsatzorte.map((ort, index) => (
-                  <option key={index} value={ort}>
-                    {ort}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Lieferzeit-Auswahl */}
-          {einsatzort && (
+          {/* Lieferzeit */}
+          {produktId && (
             <div className="form-group">
               <label>Lieferzeitraum (KW)</label>
-              <select value={lieferkw} onChange={e => setLieferkw(e.target.value)}>
+              <select value={lieferkw} onChange={e => {
+                setLieferkw(e.target.value);
+                localStorage.setItem('lieferkw', e.target.value);
+              }}>
                 <option value="">— Bitte wählen —</option>
                 {kalenderwochen.map((k, i) => (
                   <option key={i} value={k.kw}>

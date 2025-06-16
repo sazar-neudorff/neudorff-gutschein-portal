@@ -1,0 +1,72 @@
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #ffee50 0%, white 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Caveat', Arial, sans-serif;
+  z-index: 9999;
+  transform: translateY(0); /* Ausgangsposition */
+  opacity: 1;
+  transition: transform 1s ease, opacity 0.8s ease;
+}
+
+.welcome-screen.hide {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.welcome-logo {
+  width: 600px;
+  margin-bottom: 2rem;
+}
+
+.welcome-screen h1,
+.welcome-screen h2 {
+  margin: 0.2rem 0;
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* Smartphones (bis 600px) */
+@media (max-width: 600px) {
+    
+  }
+  
+  /* Tablets (601px – 900px) */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .welcome-screen h1,
+    .welcome-screen h2 {
+      margin: 0.2rem 0;
+      font-size: 32px;
+    }
+    .welcome-logo {
+      width: 400px;
+      margin-bottom: 2rem;
+    }
+  }
+
+  /* Smartphones bis 480px */
+@media (max-width: 480px) {
+    .welcome-screen h1,
+    .welcome-screen h2 {
+      margin: 0.2rem 0;
+      font-size: 32px;
+    }
+    .welcome-logo {
+      width: 200px;
+      margin-bottom: 2rem;
+    }
+}
+  

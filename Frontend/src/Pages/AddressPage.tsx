@@ -1,4 +1,3 @@
-// src/Pages/AddressPage.tsx
 import { useState, useEffect } from 'react';
 import Layout from './Layout';
 import ProgressBar from '../Elements/ProgressBar';
@@ -24,9 +23,25 @@ export default function AddressPage() {
     datenschutz: false
   });
 
+  const [abweichendeRechnungsadresse, setAbweichendeRechnungsadresse] = useState(false);
+  const [rechnungAdresse, setRechnungAdresse] = useState({
+    firma: '',
+    strasse: '',
+    nr: '',
+    plz: '',
+    ort: ''
+  });
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // 🟢 Vorbefüllen aus localStorage
+  useEffect(() => {
+    const code = localStorage.getItem('gutscheincode');
+    if (!code) {
+      localStorage.setItem('warnung', 'Bitte gib zuerst einen gültigen Gutscheincode ein.');
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const gespeicherteAdresse = localStorage.getItem('adresse');
     if (gespeicherteAdresse) {
@@ -34,9 +49,16 @@ export default function AddressPage() {
         setForm(JSON.parse(gespeicherteAdresse));
       } catch {}
     }
+
+    const gespeicherteRechnungsAdresse = localStorage.getItem('rechnungAdresse');
+    if (gespeicherteRechnungsAdresse) {
+      try {
+        setRechnungAdresse(JSON.parse(gespeicherteRechnungsAdresse));
+        setAbweichendeRechnungsadresse(true);
+      } catch {}
+    }
   }, []);
 
-  // 🟢 Optional: Live-Speichern bei jeder Eingabe
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
     const { name, value, type } = target;
@@ -49,8 +71,27 @@ export default function AddressPage() {
     setErrors({});
   };
 
+  const handleRechnungsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const updated = { ...rechnungAdresse, [name]: value };
+    setRechnungAdresse(updated);
+    localStorage.setItem('rechnungAdresse', JSON.stringify(updated));
+    setErrors({});
+  };
+
+  const handleCheckboxToggle = () => {
+    const newValue = !abweichendeRechnungsadresse;
+    setAbweichendeRechnungsadresse(newValue);
+    if (!newValue) {
+      setRechnungAdresse({ firma: '', strasse: '', nr: '', plz: '', ort: '' });
+      localStorage.removeItem('rechnungAdresse');
+    }
+  };
+
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
+
+    // Lieferadresse
     if (!form.anrede) newErrors.anrede = 'Pflichtfeld';
     if (!form.vorname) newErrors.vorname = 'Pflichtfeld';
     if (!form.nachname) newErrors.nachname = 'Pflichtfeld';
@@ -61,6 +102,16 @@ export default function AddressPage() {
     if (!form.email) newErrors.email = 'Pflichtfeld';
     if (form.email.trim() !== form.emailWdh.trim()) newErrors.emailWdh = 'E-Mails stimmen nicht überein';
     if (!form.datenschutz) newErrors.datenschutz = 'Zustimmung erforderlich';
+
+    // Rechnungsadresse falls abweichend
+    if (abweichendeRechnungsadresse) {
+      if (!rechnungAdresse.firma) newErrors.reFirma = 'Pflichtfeld';
+      if (!rechnungAdresse.strasse) newErrors.reStrasse = 'Pflichtfeld';
+      if (!rechnungAdresse.nr) newErrors.reNr = 'Pflichtfeld';
+      if (!rechnungAdresse.plz) newErrors.rePlz = 'Pflichtfeld';
+      if (!rechnungAdresse.ort) newErrors.reOrt = 'Pflichtfeld';
+    }
+
     return newErrors;
   };
 
@@ -72,8 +123,11 @@ export default function AddressPage() {
       return;
     }
 
-    // Falls du NICHT live speicherst, kannst du hier nochmal speichern:
     localStorage.setItem('adresse', JSON.stringify(form));
+    if (abweichendeRechnungsadresse) {
+      localStorage.setItem('rechnungAdresse', JSON.stringify(rechnungAdresse));
+    }
+
     navigate('/zusammenfassung');
   };
 
@@ -157,6 +211,51 @@ export default function AddressPage() {
 
           <div className="form-group">
             <label>
+              <input type="checkbox" checked={abweichendeRechnungsadresse} onChange={handleCheckboxToggle} />
+              Rechnungsadresse ist abweichend
+            </label>
+          </div>
+
+          {abweichendeRechnungsadresse && (
+            <div className="rechnung-adresse">
+              <h3>Rechnungsadresse</h3>
+
+              <div className="form-group">
+                <label>Firma*</label>
+                <input name="firma" value={rechnungAdresse.firma} onChange={handleRechnungsChange} />
+                {errors.reFirma && <p className="error">{errors.reFirma}</p>}
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Straße*</label>
+                  <input name="strasse" value={rechnungAdresse.strasse} onChange={handleRechnungsChange} />
+                                    {errors.reStrasse && <p className="error">{errors.reStrasse}</p>}
+                </div>
+                <div className="form-group">
+                  <label>Nr.*</label>
+                  <input name="nr" value={rechnungAdresse.nr} onChange={handleRechnungsChange} />
+                  {errors.reNr && <p className="error">{errors.reNr}</p>}
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>PLZ*</label>
+                  <input name="plz" value={rechnungAdresse.plz} onChange={handleRechnungsChange} />
+                  {errors.rePlz && <p className="error">{errors.rePlz}</p>}
+                </div>
+                <div className="form-group">
+                  <label>Ort*</label>
+                  <input name="ort" value={rechnungAdresse.ort} onChange={handleRechnungsChange} />
+                  {errors.reOrt && <p className="error">{errors.reOrt}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label>
               <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
               Ich akzeptiere die Datenschutzbedingungen.*
             </label>
@@ -164,8 +263,16 @@ export default function AddressPage() {
           </div>
 
           <div className="form-nav">
-            <button className="btn btn-brown btn-left" type="button" onClick={() => navigate('/auswahl')}>Zurück</button>
-            <button className="btn btn-green btn-right" type="submit">Weiter</button>
+            <button
+              className="btn btn-brown btn-left"
+              type="button"
+              onClick={() => navigate('/auswahl')}
+            >
+              Zurück
+            </button>
+            <button className="btn btn-green btn-right" type="submit">
+              Weiter
+            </button>
           </div>
         </form>
       </div>

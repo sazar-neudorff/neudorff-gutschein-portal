@@ -1,0 +1,35 @@
+/* Übergangsanimation: wie Umblättern */
+.content {
+  background: linear-gradient(135deg, #fffde5, #fff8c8);
+  border-radius: 8px;
+  box-shadow:
+    -10px 10px 30px rgba(0, 0, 0, 0.05),
+    inset 0 -2px 4px rgba(255, 240, 150, 0.3);
+  transform-style: preserve-3d;
+}
+
+.dashboard {
+  background: #fffef0; /* Sanftes Papierweiß */
+}
+
+.page-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: all 300ms ease-in-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0%);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: all 300ms ease-in-out;
+}
