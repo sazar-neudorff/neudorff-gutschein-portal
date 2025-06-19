@@ -20,9 +20,21 @@ export default function SummaryPage() {
     const gespeicherteLieferkw = localStorage.getItem('lieferkw');
     const gespeicherteRechnung = localStorage.getItem('rechnungAdresse');
 
-    // Wenn irgendwas fehlt → zurück zur Startseite
-    if (!gespeicherterCode || !gespeichertesProdukt || !gespeicherteAdresse || !gespeicherteLieferkw) {
+    // 🛡️ Falls irgendwas fehlt → zurück zur passenden Seite
+    if (!gespeicherterCode) {
       navigate('/', { replace: true });
+      return;
+    }
+    if (!gespeichertesProdukt) {
+      navigate('/auswahl', { replace: true });
+      return;
+    }
+    if (!gespeicherteAdresse) {
+      navigate('/adresse', { replace: true });
+      return;
+    }
+    if (!gespeicherteLieferkw) {
+      navigate('/auswahl', { replace: true });
       return;
     }
 
@@ -32,15 +44,15 @@ export default function SummaryPage() {
     setAdresse(parsedAdresse);
     setLieferkw(gespeicherteLieferkw);
 
+    // Rechnungsadresse: fallback = Lieferadresse
     if (gespeicherteRechnung) {
       setRechnungAdresse(JSON.parse(gespeicherteRechnung));
     } else {
-      setRechnungAdresse(parsedAdresse); // fallback: gleiche wie Lieferadresse
+      setRechnungAdresse(parsedAdresse);
     }
   }, [navigate]);
 
   const handleBestellen = () => {
-    // Hier könnte man später einen API-Aufruf machen
     navigate('/bestaetigung');
   };
 
@@ -116,6 +128,7 @@ export default function SummaryPage() {
             <div className="hinweis-links">
               <a href="/" className="link-inline">Bestell-Set-Code ändern</a><br />
               <a href="/adresse" className="link-inline">Lieferadresse ändern</a><br />
+              <a href="/auswahl" className="link-inline">Produkt / Lieferzeit ändern</a>
             </div>
           </div>
 
@@ -126,8 +139,12 @@ export default function SummaryPage() {
         </div>
 
         <div className="summary-nav">
-          <button className="btn btn-brown btn-left" type="button" onClick={() => navigate('/adresse')}>Zurück</button>
-          <button className="btn btn-green btn-right" onClick={handleBestellen}>Verbindlich bestellen</button>
+          <button className="btn btn-brown btn-left" type="button" onClick={() => navigate('/adresse')}>
+            Zurück
+          </button>
+          <button className="btn btn-green btn-right" onClick={handleBestellen}>
+            Verbindlich bestellen
+          </button>
         </div>
       </div>
     </Layout>

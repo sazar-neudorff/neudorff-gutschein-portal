@@ -20,7 +20,7 @@ export default function ConfirmationPage() {
     const adresse = localStorage.getItem('adresse');
     const lieferkw = localStorage.getItem('lieferkw');
 
-    // ❌ Fehlerbehandlung: Redirect nur nach Klick auf OK
+    // 🔒 Prüfung der Voraussetzungen
     if (!gutscheincode) {
       setFehler({ nachricht: 'Kein Gutscheincode gefunden. Du wirst zur Startseite weitergeleitet.', ziel: '/' });
       return;
@@ -34,22 +34,23 @@ export default function ConfirmationPage() {
       return;
     }
     if (!lieferkw) {
-      setFehler({ nachricht: 'Kein Lieferzeitraum angegeben. Du wirst zur Lieferungsauswahl weitergeleitet.', ziel: '/lieferung' });
+      setFehler({ nachricht: 'Kein Lieferzeitraum angegeben. Du wirst zur Lieferungsauswahl weitergeleitet.', ziel: '/auswahl' });
       return;
     }
 
-    // ✅ Alles ist da → Seite freigeben
+    // ✅ Alles passt → weiter
     setLieferkw(lieferkw);
 
+    // Neue Bestellnummer erzeugen
     const letzteNummer = localStorage.getItem('letzteBestellnummer');
     const neueNummer = letzteNummer ? parseInt(letzteNummer) + 1 : 1;
     const bestellnummerFormatiert = `NP${neueNummer.toString().padStart(5, '0')}`;
     setBestellnummer(bestellnummerFormatiert);
     localStorage.setItem('letzteBestellnummer', neueNummer.toString());
 
-    setZeigeInhalt(true); // jetzt darf Inhalt angezeigt werden
+    setZeigeInhalt(true);
 
-    // nach kurzer Zeit alles löschen (außer Bestellnummern-Zähler)
+    // Aufräumen: localStorage leeren (außer Bestellnummern-Zähler)
     const cleanup = setTimeout(() => {
       const letzte = localStorage.getItem('letzteBestellnummer');
       localStorage.clear();
@@ -80,7 +81,7 @@ export default function ConfirmationPage() {
   }
 
   if (!zeigeInhalt) {
-    return null; // Zeige NICHTS, bis Daten validiert wurden
+    return null; // Bis Prüfung abgeschlossen ist: nichts anzeigen
   }
 
   return (

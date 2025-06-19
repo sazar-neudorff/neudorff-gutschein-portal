@@ -1,0 +1,118 @@
+.admin-bestellung {
+  width: 70%;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+  color: #555;
+}
+
+.admin-bestellung h2 {
+  color: #319f49;
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #2c662d;
+}
+
+input,
+select {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #319f49;
+  background: #f3fdf5;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: #333;
+}
+
+.save-button {
+  background-color: #319f49;
+  color: white;
+  padding: 0.8rem 1.4rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.save-button:hover {
+  background-color: #2a8f3f;
+}
+
+.back-button {
+  background: none;
+  color: #319f49;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.error-box {
+  background: #ffe5e5;
+  color: #a30000;
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.success-box {
+  background: #e3f7e6;
+  color: #237b2f;
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+select,
+select option {
+  color: #222;
+  background-color: #f0fff4;
+}
+
+select option {
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  color: #333;
+}

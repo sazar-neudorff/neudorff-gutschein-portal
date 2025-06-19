@@ -60,14 +60,13 @@ export default function AddressPage() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    const target = e.target;
     const { name, value, type } = target;
     const newValue = type === 'checkbox' ? (target as HTMLInputElement).checked : value;
 
     const updatedForm = { ...form, [name]: newValue };
     setForm(updatedForm);
     localStorage.setItem('adresse', JSON.stringify(updatedForm));
-
     setErrors({});
   };
 
@@ -91,7 +90,6 @@ export default function AddressPage() {
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
 
-    // Lieferadresse
     if (!form.anrede) newErrors.anrede = 'Pflichtfeld';
     if (!form.vorname) newErrors.vorname = 'Pflichtfeld';
     if (!form.nachname) newErrors.nachname = 'Pflichtfeld';
@@ -103,7 +101,6 @@ export default function AddressPage() {
     if (form.email.trim() !== form.emailWdh.trim()) newErrors.emailWdh = 'E-Mails stimmen nicht überein';
     if (!form.datenschutz) newErrors.datenschutz = 'Zustimmung erforderlich';
 
-    // Rechnungsadresse falls abweichend
     if (abweichendeRechnungsadresse) {
       if (!rechnungAdresse.firma) newErrors.reFirma = 'Pflichtfeld';
       if (!rechnungAdresse.strasse) newErrors.reStrasse = 'Pflichtfeld';
@@ -230,7 +227,7 @@ export default function AddressPage() {
                 <div className="form-group">
                   <label>Straße*</label>
                   <input name="strasse" value={rechnungAdresse.strasse} onChange={handleRechnungsChange} />
-                                    {errors.reStrasse && <p className="error">{errors.reStrasse}</p>}
+                  {errors.reStrasse && <p className="error">{errors.reStrasse}</p>}
                 </div>
                 <div className="form-group">
                   <label>Nr.*</label>

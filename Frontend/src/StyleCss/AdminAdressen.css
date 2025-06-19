@@ -1,0 +1,60 @@
+.adressen-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.back-link {
+  color: #319f49;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #319f49;
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  background: #ffdada;
+  color: #a30000;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.adressen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.5rem;
+}
+
+.adresse-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.adresse-card p {
+  margin: 0.4rem 0;
+  color: #333;
+}
+
+.adresse-card svg {
+  margin-right: 6px;
+  color: #319f49;
+}
+
+.firma {
+  font-style: italic;
+  color: #555;
+}

@@ -28,13 +28,14 @@ export default function OrderPage() {
   const [codeTyp, setCodeTyp] = useState<'alt' | 'neu'>('neu');
 
   const produkt = produkte.find(p => p.id === produktId);
+
+  // Sicherstellen: kein Gutscheincode → zurück
   useEffect(() => {
     const code = localStorage.getItem('gutscheincode');
-    if (!code) {
-      navigate('/', { replace: true });
-    }
+    if (!code) navigate('/', { replace: true });
   }, [navigate]);
 
+  // Produkte & Lieferzeit aus API + localStorage laden
   useEffect(() => {
     const code = localStorage.getItem('gutscheincode');
     const typ = localStorage.getItem('code_typ') as 'alt' | 'neu';
@@ -52,7 +53,7 @@ export default function OrderPage() {
             einsatzorte: data.einsatzorte
           };
           setProdukte([p]);
-          setProduktId(p.id); // direkt setzen
+          setProduktId(p.id); // ✅ direkt setzen
           localStorage.setItem('produkt', JSON.stringify(p));
         }
 
@@ -67,19 +68,11 @@ export default function OrderPage() {
               einsatzorte: p.einsatzorte
             }));
           setProdukte(list);
-
-          // Auswahl aus localStorage wiederherstellen
-          const gespeichertesProdukt = localStorage.getItem('produkt');
-          if (gespeichertesProdukt) {
-            const parsed = JSON.parse(gespeichertesProdukt);
-            setProduktId(parsed.id);
-          }
+          setProduktId(''); // ❌ kein Autoselect
         }
 
         const gespeicherteLieferkw = localStorage.getItem('lieferkw');
-        if (gespeicherteLieferkw) {
-          setLieferkw(gespeicherteLieferkw);
-        }
+        if (gespeicherteLieferkw) setLieferkw(gespeicherteLieferkw);
       });
 
     setKalenderwochen(generateKWsFromToday());
@@ -113,7 +106,7 @@ export default function OrderPage() {
         <div className="form-box">
           <h3>Nützlingsauswahl & Lieferzeit</h3>
 
-          {/* Produktauswahl nur bei ALT-Codes */}
+          {/* Produktauswahl bei ALT-Codes */}
           {codeTyp === 'alt' && (
             <div className="form-group">
               <label>Welchen Nützling wollen Sie einsetzen?</label>
@@ -123,8 +116,8 @@ export default function OrderPage() {
                 if (selected) {
                   localStorage.setItem('produkt', JSON.stringify(selected));
                 }
-              }}>
-                <option value="">— Bitte wählen —</option>
+              }} required>
+                <option value="" disabled hidden>— Bitte wählen —</option>
                 {produkte.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
@@ -132,8 +125,8 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Produktanzeige */}
-          {produktId && produkt && (
+          {/* Automatische Anzeige bei NEU-Codes */}
+          {codeTyp === 'neu' && produkt && (
             <div className="produkt-info-wrapper">
               <div className="produkt-image">
                 <img src={produkt.bild} alt={produkt.name} />
@@ -145,15 +138,28 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* Lieferzeit */}
+          {/* Produktanzeige bei beiden */}
+          {produktId && produkt && codeTyp === 'alt' && (
+            <div className="produkt-info-wrapper">
+              <div className="produkt-image">
+                <img src={produkt.bild} alt={produkt.name} />
+              </div>
+              <div className="produkt-text">
+                <strong>{produkt.name}</strong>
+                <p>{produkt.beschreibung}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Lieferzeit (nur nach Produktauswahl) */}
           {produktId && (
             <div className="form-group">
               <label>Lieferzeitraum (KW)</label>
               <select value={lieferkw} onChange={e => {
                 setLieferkw(e.target.value);
                 localStorage.setItem('lieferkw', e.target.value);
-              }}>
-                <option value="">— Bitte wählen —</option>
+              }} required>
+                <option value="" disabled hidden>— Bitte wählen —</option>
                 {kalenderwochen.map((k, i) => (
                   <option key={i} value={k.kw}>
                     {k.kw} – Lieferung: {k.zeitraum}
@@ -175,6 +181,7 @@ export default function OrderPage() {
   );
 }
 
+// Kalenderwochen-Funktionen
 function generateKWsFromToday(): Kalenderwoche[] {
   const list: Kalenderwoche[] = [];
   const today = new Date();

@@ -1,0 +1,70 @@
+.admin-bestellungen {
+  width: 100%;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  font-family: FrankieNeudorff, Arial, sans-serif;
+}
+
+.admin-bestellungen h2 {
+  font-size: 2rem;
+  color: #319f49;
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #319f49;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.admin-message {
+  background: #fce4e4;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.bestellungen-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bestellungen-table th,
+.bestellungen-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.bestellungen-table th {
+  background-color: #f1f8f1;
+  color: #319f49;
+}
+
+.bestellungen-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+}

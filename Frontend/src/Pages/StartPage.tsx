@@ -10,69 +10,52 @@ import logoImg from '../assets/logo.png';
 export default function StartPage() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [text1, setText1] = useState('');
-  const [text2, setText2] = useState('');
   const [fadeOut, setFadeOut] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  // Welcome-Tippen + Animation
-  
+
+  // Begrüßungsanimation mit Timing-Schutz
   useEffect(() => {
-  const line1 = 'Neudorff Nützlingsportal';
-  const line2 = '';
+    const line1 = 'Neudorff Nützlingsportal';
+    const typingSpeed = 60;
+    const showPauseAfterTyping = 1000;
+    let index = 0;
 
-  let index = 0;
-    const timer1 = setInterval(() => {
-      if (index < line1.length) {
-        const nextChar = line1.charAt(index);
-        setText1(prev => prev + nextChar);
+    const typeNext = () => {
+      if (index <= line1.length) {
+        setText1(line1.slice(0, index));
         index++;
+        setTimeout(typeNext, typingSpeed);
       } else {
-        clearInterval(timer1);
+        // Nach Animation → kurz anzeigen, dann ausblenden
+        setTimeout(() => {
+          setFadeOut(true);
+          setTimeout(() => setShowWelcome(false), 1000); // fadeOut dauert 1 Sekunde
+        }, showPauseAfterTyping);
       }
-    }, 60);
+    };
 
-    let interval2: ReturnType<typeof setInterval>;
-
-    const timer2 = setTimeout(() => {
-      let j = 0;
-      interval2 = setInterval(() => {
-        if (j < line2.length) {
-          const nextChar = line2.charAt(j);
-          setText2(prev => prev + nextChar);
-          j++;
-        } else {
-          clearInterval(interval2);
-        }
-      }, 60);
-    }, line1.length * 60 + 200);
-
-    const exit = setTimeout(() => {
-      setFadeOut(true);
-      setTimeout(() => setShowWelcome(false), 1000);
-    }, 2500);
+    typeNext();
 
     return () => {
-      clearInterval(timer1);
-      clearTimeout(timer2);
-      clearInterval(interval2);
-      clearTimeout(exit);
+      // keine Cleanup nötig, da alles in setTimeout läuft
     };
   }, []);
 
-  // Gutscheinlogik
+  // Vorbefüllen bei Rückkehr
   useEffect(() => {
     const gespeicherterCode = localStorage.getItem('gutscheincode');
     if (gespeicherterCode) {
       setCode(gespeicherterCode);
     }
 
-    const resetStorage = () => {
+    // Nur beim Verlassen alles löschen
+    const clearOnExit = () => {
       localStorage.clear();
     };
-
-    window.addEventListener('beforeunload', resetStorage);
-    return () => window.removeEventListener('beforeunload', resetStorage);
+    window.addEventListener('beforeunload', clearOnExit);
+    return () => window.removeEventListener('beforeunload', clearOnExit);
   }, []);
 
   const formatCode = (value: string) => {
@@ -82,8 +65,7 @@ export default function StartPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const formatted = formatCode(input);
+    const formatted = formatCode(e.target.value);
     setCode(formatted);
     setError('');
   };
@@ -120,16 +102,8 @@ export default function StartPage() {
         localStorage.setItem('produkt', JSON.stringify(produkt));
       }
 
-      if (data.typ === 'alt' && Array.isArray(data.produkte) && data.produkte.length > 0) {
-        const first = data.produkte[0];
-        const produkt = {
-          id: first.id,
-          name: first.produktname,
-          beschreibung: first.beschreibung,
-          bild: first.bildpfad,
-          einsatzorte: first.einsatzorte || []
-        };
-        localStorage.setItem('produkt', JSON.stringify(produkt));
+      if (data.typ === 'alt' && Array.isArray(data.produkte)) {
+        localStorage.removeItem('produkt'); // Auswahl erfolgt später
       }
 
       navigate('/auswahl');
@@ -186,8 +160,7 @@ export default function StartPage() {
       {showWelcome && (
         <div className={`welcome-screen ${fadeOut ? 'hide' : ''}`}>
           <img src={logoImg} alt="Neudorff Logo" className="welcome-logo" />
-          <h1>{text1 || ''}</h1>
-          <h2>{text2 || ''}</h2>
+          <h1>{text1}</h1>
         </div>
       )}
     </>
