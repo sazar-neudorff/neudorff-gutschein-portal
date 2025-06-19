@@ -9,8 +9,6 @@ interface Bestellung {
   erstellt_am: string;
   erstellt_datum: string;
   erstellt_uhrzeit: string;
-  status: string;
-
 }
 
 export default function AdminBestellungen() {
@@ -42,7 +40,6 @@ export default function AdminBestellungen() {
               <th>EAN</th>
               <th>Kommentar</th>
               <th>Datum</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -53,7 +50,6 @@ export default function AdminBestellungen() {
                 <td>{b.ean}</td>
                 <td>{b.kommentar}</td>
                 <td>{b.erstellt_am}</td>
-                <td>{b.status || '-'}</td>
               </tr>
             ))}
           </tbody>

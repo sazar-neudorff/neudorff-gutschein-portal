@@ -10,7 +10,6 @@ import AdminBestand from './AdminBestand';
 import AdminProdukte from './AdminProdukte';
 import AdminBestellungen from './AdminBestellungen';
 import AdminStatistiken from './AdminStatistiken';
-import AdminAdressen from './AdminAdressen';
 import AdminBestellungNeu from './AdminBestellungNeu';
 /* import CSVImport from './CSVImport'; */
 
@@ -56,9 +55,7 @@ export default function AdminDashboard() {
           <div className={`sidebar-item ${activePage === 'produkte' ? 'active' : ''}`} onClick={() => setActivePage('produkte')}>Produkte verwalten</div>
           <div className={`sidebar-item ${activePage === 'bestellungen' ? 'active' : ''}`} onClick={() => setActivePage('bestellungen')}>Bestellungen anzeigen</div>
           <div className={`sidebar-item ${activePage === 'statistik' ? 'active' : ''}`} onClick={() => setActivePage('statistik')}>Diagramme & Statistik</div>
-          <div className={`sidebar-item ${activePage === 'adressen' ? 'active' : ''}`} onClick={() => setActivePage('adressen')}>Adressen bearbeiten</div>
           <div className={`sidebar-item ${activePage === 'bestellung' ? 'active' : ''}`} onClick={() => setActivePage('bestellung')}>Bestellung aufgeben</div>
-          <div className={`sidebar-item ${activePage === 'csv' ? 'active' : ''}`} onClick={() => setActivePage('csv')}>CSV hochladen</div>
         </div>
 
         {/* Rechter Content-Bereich */}
@@ -97,7 +94,6 @@ export default function AdminDashboard() {
           {activePage === 'produkte' && <AdminProdukte />}
           {activePage === 'bestellungen' && <AdminBestellungen />}
           {activePage === 'statistik' && <AdminStatistiken />}
-          {activePage === 'adressen' && <AdminAdressen />}
           {activePage === 'bestellung' && <AdminBestellungNeu />}
         </div>
       </div>

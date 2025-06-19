@@ -1,6 +1,6 @@
 .admin-bestellung {
   width: 70%;
-  padding: 2rem;
+  padding-top: 2rem;
   background-color: #ffffff;
   border-radius: 12px;
   display: flex;
@@ -12,7 +12,6 @@
 .admin-bestellung h2 {
   color: #319f49;
   font-size: 1.8rem;
-  text-align: center;
   margin-bottom: 2rem;
 }
 

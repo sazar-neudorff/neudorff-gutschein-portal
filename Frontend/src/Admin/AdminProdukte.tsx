@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import '../StyleCss/AdminProdukte.css';
-import {
+/* import {
   FaTrashAlt
-} from 'react-icons/fa';
+} from 'react-icons/fa'; */
 
 
 interface Produkt {
@@ -24,7 +24,7 @@ export default function AdminProdukte() {
       .catch(() => setMessage('Fehler beim Laden der Produkte.'));
   }, []);
 
-  const handleDelete = async (ean: string) => {
+  /* const handleDelete = async (ean: string) => {
     const confirm = window.confirm('Produkt wirklich löschen?');
     if (!confirm) return;
 
@@ -37,7 +37,7 @@ export default function AdminProdukte() {
     const data = await res.json();
     setMessage(data.message || '');
     setProdukte(produkte.filter(p => p.ean !== ean));
-  };
+  }; */
 
   return (
     <div className="admin-produkte">
@@ -52,7 +52,7 @@ export default function AdminProdukte() {
             <th>Beschreibung</th>
             <th>Bild</th>
             <th>Einsatzorte</th>
-            <th>Aktion</th>
+            {/* <th>Aktion</th> */}
           </tr>
         </thead>
         <tbody>
@@ -65,11 +65,11 @@ export default function AdminProdukte() {
                 <img src={`/assets/${p.bildpfad}`} alt={p.produktname} height="40" />
               </td>
               <td>{p.einsatzorte}</td>
-              <td>
+              {/* <td>
                 <button className="btn-delete" onClick={() => handleDelete(p.ean)}>
                    <FaTrashAlt />Löschen
                 </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
